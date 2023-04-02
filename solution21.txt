@@ -1,0 +1,81 @@
+1 Read the three files into python as dataframes
+import pandas as pd
+import numpy as np
+
+data1= pd.read_csv("file1.csv")
+data2= pd.read_csv("file2.csv")
+data3= pd.read_csv("file3.csv")
+
+2. Show the DataFrame's shape.
+data1.shape
+data2.shape
+data3.shape
+
+3. Standardize header names.
+
+data1_sta= []
+for i in data1.columns:
+    i=i.replace(" ","_")
+    data1_sta.append(i.lower())
+data1.columns = data1_sta
+
+data2_sta= []
+for i in data2.columns:
+    i=i.replace(" ","_")
+    data2_sta.append(i.lower())
+data2.columns = data2_sta
+
+data3_sta= []
+for i in data3.columns:
+    i=i.replace(" ","_")
+    data3_sta.append(i.lower())
+data3.columns = data3_sta
+
+3. Rearrange the columns in the dataframe as needed
+data1.columns == data2.columns
+data2.columns == data3.columns
+data3= data3.rename(columns={'state' : 'st'})
+data3 = data3[['customer', 'st', 'gender', 'education', 'customer_lifetime_value',
+       'income', 'monthly_premium_auto', 'number_of_open_complaints',
+       'total_claim_amount', 'policy_type', 'vehicle_class']]
+data2.columns == data3.columns
+
+4. Correct the values in the column 'customer lifetime value'. They are given as a percent, so divide them by 100 and change dtype to numerical type. (only 2 of the files need this step.)
+
+Data1
+for in range(len(data1['customer_lifetime_value'])):
+    data1['customer_lifetime_value'][i]=str(data1['customer_lifetime_value'][i]).replace("%","")
+    data1['customer_lifetime_value'][i]=float(data1['customer_lifetime_value'][i])/100
+    data1
+
+    
+ data1['customer_lifetime_value'] =  pd.to_numeric(data1['customer_lifetime_value'])    
+
+Same for data 2(replace data1 with data2)
+
+5. Concatenate the three dataframes
+
+	concat_data = pd.concat([data1,data2,data3], axis=0)
+
+6. Which columns are numerical?
+
+	concat_data.dtypes
+	Numerical columns are customer_lifetime_value, income, monthly_premium_auto, total_claim_amount.
+
+7. Which columns are categorical?
+	customer, st, gender, education, policy_type, vehicle_class
+
+8. Understand the meaning of all columns.
+	Understood. 
+
+9. Perform the data cleaning operations mentioned so far in class
+Delete the column education and the number of open complaints from the dataframe.
+	concat_data = concat_data.drop(['education', 'number_of_open_complaints'], axis=1)
+	concat_data
+Check for duplicate rows in the data and remove if any.
+	concat_data.duplicated()
+concat_data.drop_duplicates()
+concat_data.shape
+No duplicates
+Filter out the data for customers who have an income of 0 or less. (Only show customers who HAVE an income.)
+	concat_data[concat_data['income']>0]
